@@ -43,7 +43,14 @@ local function maybe_sesh_file(path)
 end
 
 function M.save_sesh(path)
-	-- TODO: add max_files functionality
+	-- TODO: do more than notify?
+	local files_num = vim.fn.len(vim.fn.globpath(M.opts.index_dir, "*", 0, 1))
+	if files_num >= M.opts.max_files then
+		vim.notify(
+			"There are " .. files_num .. " (>" .. M.opts.max_files .. ") session files already.",
+			vim.log.levels.WARN
+		)
+	end
 	local hashed = djb2(path)
 	local sesh_file = M.opts.index_dir .. "/" .. hashed
 	vim.cmd("mksession! " .. sesh_file)
