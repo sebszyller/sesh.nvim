@@ -5,8 +5,8 @@ local M = {}
 M.opts = {}
 
 local defaults = {
-	index_dir = vim.fn.stdpath("data") .. "/sesh_index",
-	max_files = 1000,
+	index_dir = vim.fn.stdpath("data") .. "/sesh_index", -- where to save the session files
+	max_files = 1000, -- show warning when there are more than max_files session files
 }
 
 function M.setup(opts)
@@ -18,7 +18,7 @@ end
 local function djb2(input)
 	local hash = 5381
 	for i = 1, #input do
-		hash = bit.band(hash * 32, 0xFFFFFFFF) + hash + input:byte(i)
+		hash = bit.band(hash * 32, 0xFFFFFFFF) + hash + input:byte(i) -- NOTE: Lua has 32bit-signed ints, so need to prevent overflows
 	end
 	return bit.tohex(hash)
 end
@@ -34,9 +34,9 @@ end
 
 local function maybe_sesh_file(path)
 	local hashed = djb2(path)
-	local file = M.opts.index_dir .. "/" .. hashed
-	if file_exists(file) then
-		return file
+	local sesh_file = M.opts.index_dir .. "/" .. hashed
+	if file_exists(sesh_file) then
+		return sesh_file
 	else
 		return nil
 	end
@@ -45,7 +45,7 @@ end
 function M.save_sesh(path)
 	-- TODO: do more than notify?
 	local files_num = vim.fn.len(vim.fn.globpath(M.opts.index_dir, "*", 0, 1))
-	if files_num >= M.opts.max_files then
+	if files_num > M.opts.max_files then
 		vim.notify(
 			"There are " .. files_num .. " (>" .. M.opts.max_files .. ") session files already.",
 			vim.log.levels.WARN
@@ -56,10 +56,10 @@ function M.save_sesh(path)
 	vim.cmd("mksession! " .. sesh_file)
 end
 
-function M.load_sesh(current_path)
-	local sesh_file = maybe_sesh_file(current_path)
+function M.load_sesh(path)
+	local sesh_file = maybe_sesh_file(path)
 	if sesh_file == nil then
-		vim.notify("No session file found for " .. current_path, vim.log.levels.WARN)
+		vim.notify("No session file found for " .. path, vim.log.levels.WARN)
 	else
 		vim.cmd("source " .. sesh_file)
 	end
