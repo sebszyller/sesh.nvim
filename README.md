@@ -26,6 +26,7 @@ Customise the default `opts`:
 opts = {
     index_dir = vim.fn.stdpath("data") .. "/sesh_index", -- where to save the session files
     max_files = 1000, -- show warning when there are more than max_files session files
+    verbose = false, -- print INFO messages
 }
 ```
 

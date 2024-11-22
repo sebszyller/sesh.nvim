@@ -7,11 +7,13 @@ M.opts = {}
 local defaults = {
 	index_dir = vim.fn.stdpath("data") .. "/sesh_index", -- where to save the session files
 	max_files = 1000, -- show warning when there are more than max_files session files
+	verbose = false, -- print INFO messages
 }
 
 function M.setup(opts)
 	M.opts.index_dir = opts.index_dir or defaults.index_dir
 	M.opts.max_files = opts.max_files or defaults.max_files
+	M.opts.verbose = opts.verbose or defaults.verbose
 	vim.fn.mkdir(M.opts.index_dir, "p")
 end
 
@@ -55,7 +57,12 @@ function M.save_sesh(path)
 			vim.log.levels.WARN
 		)
 	end
-	vim.cmd("mksession! " .. M.file_name(path))
+
+	local sesh_file = M.file_name(path)
+	if M.opts.verbose then
+		vim.notify("Saving session file to " .. sesh_file, vim.log.levels.INFO)
+	end
+	vim.cmd("mksession! " .. sesh_file)
 end
 
 function M.load_sesh(path)
@@ -64,6 +71,9 @@ function M.load_sesh(path)
 		vim.notify("No session file found for " .. path, vim.log.levels.WARN)
 	else
 		vim.cmd("source " .. sesh_file)
+		if M.opts.verbose then
+			vim.notify("Loaded session file from " .. sesh_file, vim.log.levels.INFO)
+		end
 	end
 end
 
