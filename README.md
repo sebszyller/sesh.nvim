@@ -28,11 +28,12 @@ opts = {
 
 ### Usage
 
-`sesh.nvim` exposes two functions:
+`sesh.nvim` exposes three functions:
 
 ```lua
 require("sesh").save_sesh(path)
 require("sesh").load_sesh(path)
+require("sesh").file_name(path) -- if you want to build around sesh
 ```
 
 *I* like to trigger `save_sesh` on `VimLeavePre`, and have a map for `load_sesh`.

@@ -32,9 +32,13 @@ local function file_exists(path)
 	return false
 end
 
-local function maybe_sesh_file(path)
+function M.file_name(path)
 	local hashed = djb2(path)
-	local sesh_file = M.opts.index_dir .. "/" .. hashed
+	return M.opts.index_dir .. "/" .. hashed
+end
+
+local function maybe_sesh_file(path)
+	local sesh_file = M.file_name(path)
 	if file_exists(sesh_file) then
 		return sesh_file
 	else
@@ -51,9 +55,7 @@ function M.save_sesh(path)
 			vim.log.levels.WARN
 		)
 	end
-	local hashed = djb2(path)
-	local sesh_file = M.opts.index_dir .. "/" .. hashed
-	vim.cmd("mksession! " .. sesh_file)
+	vim.cmd("mksession! " .. M.file_name(path))
 end
 
 function M.load_sesh(path)
