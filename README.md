@@ -2,13 +2,16 @@
 
 Minimalistic plugin for saving/loading neovim sessions.
 
+`sesh.nvim` keeps track of the last set of open buffers for a given directory upon closing nvim.
+This is **NOT** a session management plugin a'la workspaces.
+
 ## Installation
 
 Use in `lazy`:
 
 ```lua
 {
-	"sebszyller/sesh.nvim",
+    "sebszyller/sesh.nvim",
     opts = {
         -- your configuration
     }
@@ -26,7 +29,7 @@ opts = {
 }
 ```
 
-### Usage
+## Usage
 
 `sesh.nvim` exposes three functions:
 
@@ -39,6 +42,6 @@ require("sesh").file_name(path) -- if you want to build around sesh
 *I* like to trigger `save_sesh` on `VimLeavePre`, and have a map for `load_sesh`.
 
 `sesh.nvim` uses the [djb2](https://theartincode.stanis.me/008-djb2/) hash function to name the saved session files.
-The recommended way of using `sesh.nvim` is by passing the `path = vim.fn.getcwd()`.
+The recommended way of using `sesh.nvim` is by passing `path = vim.fn.getcwd()`.
 Given long paths, and varied dir names, you *should never* run into hash collisions but they *might* happen.
 
