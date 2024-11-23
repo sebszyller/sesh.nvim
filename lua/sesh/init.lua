@@ -12,10 +12,7 @@ local defaults = {
 }
 
 function M.setup(opts)
-	M.opts.index_dir = opts.index_dir or defaults.index_dir
-	M.opts.max_files = opts.max_files or defaults.max_files
-	M.opts.useless = opts.useless or defaults.useless
-	M.opts.verbose = opts.verbose or defaults.verbose
+	M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
 	vim.fn.mkdir(M.opts.index_dir, "p")
 end
 
