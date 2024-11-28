@@ -5,7 +5,7 @@ local M = {}
 M.opts = {}
 
 local defaults = {
-	index_dir = vim.fn.stdpath("data") .. "/sesh_index", -- where to save the session files
+	index_dir = vim.fn.stdpath("data") .. "/sesh.nvim", -- where to save the session files
 	max_files = 1000, -- show warning when there are more than max_files session files
 	useless = { "gitcommit", "gitrebase" }, -- do not save these buffers
 	verbose = false, -- print INFO messages
