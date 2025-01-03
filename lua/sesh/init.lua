@@ -64,14 +64,15 @@ local function close_useless_bufs()
 		then
 			local name = vim.api.nvim_buf_get_name(buf)
 			if M.opts.verbose then
-				print(
+				vim.notify(
 					string.format(
 						"Closing buffer %d: name <%s> buftype<%s> filetype<%s>",
 						buf,
 						name,
 						vim.bo[buf].buftype,
 						vim.bo[buf].filetype
-					)
+					),
+					vim.log.levels.INFO
 				)
 			end
 			vim.api.nvim_buf_delete(buf, { force = true })
