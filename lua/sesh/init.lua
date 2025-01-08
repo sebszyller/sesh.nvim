@@ -1,9 +1,19 @@
 local bit = require("bit")
 
+---@class SeshOpts
+---@field index_dir string
+---@field max_files integer
+---@field useless string[]
+---@field verbose boolean
+
+---@type table
 local M = {}
 
+---@type SeshOpts
+---@diagnostic disable-next-line: missing-fields
 M.opts = {}
 
+---@type SeshOpts
 local defaults = {
 	index_dir = vim.fn.stdpath("data") .. "/sesh.nvim", -- where to save the session files
 	max_files = 1000, -- show warning when there are more than max_files session files
@@ -11,11 +21,15 @@ local defaults = {
 	verbose = false, -- print INFO messages
 }
 
+---@param opts? SeshOpts
+---@return nil
 function M.setup(opts)
 	M.opts = vim.tbl_deep_extend("force", defaults, opts or {})
 	vim.fn.mkdir(M.opts.index_dir, "p")
 end
 
+---@param input string
+---@return string
 local function djb2(input)
 	local hash = 5381
 	for i = 1, #input do
@@ -24,6 +38,8 @@ local function djb2(input)
 	return bit.tohex(hash)
 end
 
+---@param path string
+---@return boolean
 local function file_exists(path)
 	local file = io.open(path, "r")
 	if file then
@@ -33,11 +49,15 @@ local function file_exists(path)
 	return false
 end
 
+---@param path string
+---@return string
 function M.file_name(path)
 	local hashed = djb2(path)
 	return M.opts.index_dir .. "/" .. hashed
 end
 
+---@param path string
+---@return string?
 local function maybe_sesh_file(path)
 	local sesh_file = M.file_name(path)
 	if file_exists(sesh_file) then
@@ -47,12 +67,15 @@ local function maybe_sesh_file(path)
 	end
 end
 
+---@param buf integer
+---@return nil
 local function is_useless(buf)
 	return vim.tbl_contains(M.opts.useless, vim.bo[buf].filetype)
 		or vim.bo[buf].buftype ~= ""
 		or vim.api.nvim_buf_get_name(buf) == ""
 end
 
+---@return integer
 local function close_useless_bufs()
 	local buffers = vim.api.nvim_list_bufs()
 	local useful = 0
@@ -83,6 +106,8 @@ local function close_useless_bufs()
 	return useful
 end
 
+---@param path string
+---@return nil
 function M.save_sesh(path)
 	-- TODO: do more than notify?
 	local files_num = vim.fn.len(vim.fn.globpath(M.opts.index_dir, "*", 0, 1))
@@ -108,6 +133,8 @@ function M.save_sesh(path)
 	end
 end
 
+---@param path string
+---@return nil
 function M.load_sesh(path)
 	local sesh_file = maybe_sesh_file(path)
 	if sesh_file == nil then
